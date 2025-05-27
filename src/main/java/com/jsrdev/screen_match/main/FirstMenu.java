@@ -1,5 +1,6 @@
 package com.jsrdev.screen_match.main;
 
+import com.jsrdev.screen_match.model.Episode;
 import com.jsrdev.screen_match.model.EpisodeData;
 import com.jsrdev.screen_match.model.SeasonData;
 import com.jsrdev.screen_match.model.SeriesData;
@@ -9,9 +10,10 @@ import com.jsrdev.screen_match.utils.Configuration;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class FirstMenu {
     private final ApiService apiService = new ApiService();
@@ -40,7 +42,6 @@ public class FirstMenu {
             String url = buildURL(encodeAndFormatSeriesName, null, null);
 
             String json = apiService.fetchData(url);
-            //System.out.println("\nJson: " + json);
 
             // Series
             SeriesData seriesData = convertData.getData(json, SeriesData.class);
@@ -57,11 +58,10 @@ public class FirstMenu {
             System.out.println();
             seasons.forEach(System.out::println);
 
-
             // Show episodes title by seasons
             for (int i = 0; i < seriesData.totalSeasons(); i++) {
                 List<EpisodeData> episodesBySeason = seasons.get(i).episodeData();
-                System.out.println("Season " + i);
+                System.out.println("\nSeason " + i);
                 for (EpisodeData episodeData : episodesBySeason) {
                     System.out.println("Episode " + episodeData.episode() + ": " + episodeData.title());
                 }
@@ -72,8 +72,65 @@ public class FirstMenu {
                 System.out.println("\nSeason: " + s.season());
                 s.episodeData().forEach(e -> System.out.println("Episode " + e.episode() + ": " + e.title()));
             });
+
+            // Convert all information to an episode data type list
+            List<EpisodeData> episodeData = seasons.stream()
+                    .flatMap(s -> s.episodeData().stream())
+                    .collect(Collectors.toList()); // mutable list
+                    //.toList(); // immutable list
+
+            // top 5 episodes
+            System.out.println("\nTop 5 episodes: ");
+            episodeData.stream()
+                    .filter(e -> !e.evaluation().equalsIgnoreCase("N/A"))
+                    .sorted(Comparator.comparing(EpisodeData::evaluation).reversed())
+                    .limit(5)
+                    .forEach(System.out::println);
+
+            // Convert to an episode type
+            List<Episode> episodes = seasons.stream()
+                    .flatMap(s -> s.episodeData().stream()
+                            .map(e -> new Episode(s.season(), e)))
+                    .collect(Collectors.toList());
+
+            System.out.println();
+            episodes.forEach(System.out::println);
+
+            // Search episodes by release date
+            searchEpisodesByReleaseDate(episodes);
         }
     }
+
+    private void searchEpisodesByReleaseDate(List<Episode> episodes) {
+        Integer entryDate = getEntryDate();
+        while (entryDate == null) {
+            System.out.println("\nInvalid entry, please, try again!");
+            entryDate = getEntryDate();
+        }
+
+        LocalDate searchByDate = LocalDate.of(entryDate, 1, 1);
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+        episodes.stream()
+                .filter(e -> e.getReleaseDate() != null && e.getReleaseDate().isAfter(searchByDate))
+                .forEach(e -> System.out.println(
+                        "Season: " + e.getSeason() +
+                                " Episode: " + e.getEpisodeNumber() +
+                                " Title: " + e.getTitle() +
+                                " Release Date: " + (e.getReleaseDate()).format(dtf)
+                ));
+    }
+
+    private Integer getEntryDate() {
+        System.out.println("\nEnter the date to search for episodes?: ");
+        try {
+            return scanner.nextInt();
+        } catch (InputMismatchException e) {
+            scanner.nextLine(); // clean invalid entry
+            return null;
+        }
+    }
+
 
     private String getEntrySeriesName() {
         System.out.println("\nWrite series name to search or N to exit");
