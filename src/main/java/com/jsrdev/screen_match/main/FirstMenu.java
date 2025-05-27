@@ -1,5 +1,6 @@
 package com.jsrdev.screen_match.main;
 
+import com.jsrdev.screen_match.model.Episode;
 import com.jsrdev.screen_match.model.EpisodeData;
 import com.jsrdev.screen_match.model.SeasonData;
 import com.jsrdev.screen_match.model.SeriesData;
@@ -9,10 +10,9 @@ import com.jsrdev.screen_match.utils.Configuration;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Scanner;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class FirstMenu {
@@ -87,9 +87,50 @@ public class FirstMenu {
                     .limit(5)
                     .forEach(System.out::println);
 
+            // Convert to an episode type
+            List<Episode> episodes = seasons.stream()
+                    .flatMap(s -> s.episodeData().stream()
+                            .map(e -> new Episode(s.season(), e)))
+                    .collect(Collectors.toList());
 
+            System.out.println();
+            episodes.forEach(System.out::println);
+
+            // Search episodes by release date
+            searchEpisodesByReleaseDate(episodes);
         }
     }
+
+    private void searchEpisodesByReleaseDate(List<Episode> episodes) {
+        Integer entryDate = getEntryDate();
+        while (entryDate == null) {
+            System.out.println("\nInvalid entry, please, try again!");
+            entryDate = getEntryDate();
+        }
+
+        LocalDate searchByDate = LocalDate.of(entryDate, 1, 1);
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+        episodes.stream()
+                .filter(e -> e.getReleaseDate() != null && e.getReleaseDate().isAfter(searchByDate))
+                .forEach(e -> System.out.println(
+                        "Season: " + e.getSeason() +
+                                " Episode: " + e.getEpisodeNumber() +
+                                " Title: " + e.getTitle() +
+                                " Release Date: " + (e.getReleaseDate()).format(dtf)
+                ));
+    }
+
+    private Integer getEntryDate() {
+        System.out.println("\nEnter the date to search for episodes?: ");
+        try {
+            return scanner.nextInt();
+        } catch (InputMismatchException e) {
+            scanner.nextLine(); // clean invalid entry
+            return null;
+        }
+    }
+
 
     private String getEntrySeriesName() {
         System.out.println("\nWrite series name to search or N to exit");
