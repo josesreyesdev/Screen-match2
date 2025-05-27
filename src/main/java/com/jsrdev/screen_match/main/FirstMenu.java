@@ -10,8 +10,10 @@ import com.jsrdev.screen_match.utils.Configuration;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class FirstMenu {
     private final ApiService apiService = new ApiService();
@@ -59,7 +61,7 @@ public class FirstMenu {
             // Show episodes title by seasons
             for (int i = 0; i < seriesData.totalSeasons(); i++) {
                 List<EpisodeData> episodesBySeason = seasons.get(i).episodeData();
-                System.out.println("Season " + i);
+                System.out.println("\nSeason " + i);
                 for (EpisodeData episodeData : episodesBySeason) {
                     System.out.println("Episode " + episodeData.episode() + ": " + episodeData.title());
                 }
@@ -70,6 +72,22 @@ public class FirstMenu {
                 System.out.println("\nSeason: " + s.season());
                 s.episodeData().forEach(e -> System.out.println("Episode " + e.episode() + ": " + e.title()));
             });
+
+            // Convert all information to an episode data type list
+            List<EpisodeData> episodeData = seasons.stream()
+                    .flatMap(s -> s.episodeData().stream())
+                    .collect(Collectors.toList()); // mutable list
+                    //.toList(); // immutable list
+
+            // top 5 episodes
+            System.out.println("\nTop 5 episodes: ");
+            episodeData.stream()
+                    .filter(e -> !e.evaluation().equalsIgnoreCase("N/A"))
+                    .sorted(Comparator.comparing(EpisodeData::evaluation).reversed())
+                    .limit(5)
+                    .forEach(System.out::println);
+
+
         }
     }
 
