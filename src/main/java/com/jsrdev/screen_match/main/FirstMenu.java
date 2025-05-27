@@ -40,7 +40,6 @@ public class FirstMenu {
             String url = buildURL(encodeAndFormatSeriesName, null, null);
 
             String json = apiService.fetchData(url);
-            //System.out.println("\nJson: " + json);
 
             // Series
             SeriesData seriesData = convertData.getData(json, SeriesData.class);
@@ -56,7 +55,6 @@ public class FirstMenu {
             }
             System.out.println();
             seasons.forEach(System.out::println);
-
 
             // Show episodes title by seasons
             for (int i = 0; i < seriesData.totalSeasons(); i++) {

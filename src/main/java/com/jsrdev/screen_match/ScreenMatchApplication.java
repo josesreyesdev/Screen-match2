@@ -1,5 +1,6 @@
 package com.jsrdev.screen_match;
 
+import com.jsrdev.screen_match.main.ExampleStreams;
 import com.jsrdev.screen_match.main.FirstMenu;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -15,6 +16,9 @@ public class ScreenMatchApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 		FirstMenu menu = new FirstMenu();
-        menu.showMenu();
+        //menu.showMenu();
+
+		ExampleStreams streams = new ExampleStreams();
+		streams.showStreams();
 	}
 }
