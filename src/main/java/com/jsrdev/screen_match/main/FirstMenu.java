@@ -77,7 +77,7 @@ public class FirstMenu {
             List<EpisodeData> episodeData = seasons.stream()
                     .flatMap(s -> s.episodeData().stream())
                     .collect(Collectors.toList()); // mutable list
-                    //.toList(); // immutable list
+            //.toList(); // immutable list
 
             // top 5 episodes
             System.out.println("\nTop 5 episodes: ");
@@ -105,9 +105,25 @@ public class FirstMenu {
             //searchEpisodesByReleaseDate(episodes);
 
             // Search episodes by title
-            searchEpisodeByTitle(episodes);
+            //searchEpisodeByTitle(episodes);
+
+            // Statistics
+            statistics(episodes);
         }
     }
+
+    private void statistics(List<Episode> episodes) {
+        Map<Integer, Double> ratingBySeason = episodes.stream()
+                .filter(e -> e.getEvaluation() > 0.0)
+                .collect(
+                        Collectors.groupingBy(
+                                Episode::getSeason,
+                                Collectors.averagingDouble(Episode::getEvaluation)
+                        )
+                );
+        System.out.println("\nRating by Season: " + ratingBySeason);
+    }
+
 
     private void searchEpisodeByTitle(List<Episode> episodes) {
         String title = entry("Enter the episode title");
