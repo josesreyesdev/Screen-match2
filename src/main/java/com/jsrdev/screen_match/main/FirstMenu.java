@@ -25,11 +25,11 @@ public class FirstMenu {
         System.setProperty("https.protocols", "TLSv1.2");
 
         while (true) {
-            String entrySeriesName = getEntrySeriesName();
+            String entrySeriesName = entry("Write series name to search or N to exit");
 
             while (entrySeriesName.isBlank()) {
                 System.out.println("Invalid entry, try again!");
-                entrySeriesName = getEntrySeriesName();
+                entrySeriesName = entry("Write series name to search or N to exit");
             }
             entrySeriesName = entrySeriesName.trim().toLowerCase();
 
@@ -77,14 +77,19 @@ public class FirstMenu {
             List<EpisodeData> episodeData = seasons.stream()
                     .flatMap(s -> s.episodeData().stream())
                     .collect(Collectors.toList()); // mutable list
-                    //.toList(); // immutable list
+            //.toList(); // immutable list
 
             // top 5 episodes
             System.out.println("\nTop 5 episodes: ");
             episodeData.stream()
                     .filter(e -> !e.evaluation().equalsIgnoreCase("N/A"))
+                    .peek(e -> System.out.println("First filter(N/A): " + e))
                     .sorted(Comparator.comparing(EpisodeData::evaluation).reversed())
+                    .peek(e -> System.out.println("Second Sorted: " + e))
+                    .map(e -> e.title().toUpperCase())
+                    .peek(e -> System.out.println("Third Map to upper title: " + e))
                     .limit(5)
+                    .peek(e -> System.out.println("Fourth Limit: " + e))
                     .forEach(System.out::println);
 
             // Convert to an episode type
@@ -97,7 +102,61 @@ public class FirstMenu {
             episodes.forEach(System.out::println);
 
             // Search episodes by release date
-            searchEpisodesByReleaseDate(episodes);
+            //searchEpisodesByReleaseDate(episodes);
+
+            // Search episodes by title
+            //searchEpisodeByTitle(episodes);
+
+            // Rating by season
+            //ratingBySeason(episodes);
+
+            // Statistics
+            statistics(episodes);
+        }
+    }
+
+    private void statistics(List<Episode> episodes) {
+        DoubleSummaryStatistics statistics = episodes.stream()
+                .filter(e -> e.getEvaluation() > 0.0)
+                .collect(Collectors.summarizingDouble(Episode::getEvaluation));
+
+        System.out.println("\nStatistics: " + statistics);
+        System.out.println("Average rating: " + statistics.getAverage());
+        System.out.println("Best rated episode: " + statistics.getMax());
+        System.out.println("Worst rated episode: " + statistics.getMin());
+    }
+
+    private void ratingBySeason(List<Episode> episodes) {
+        Map<Integer, Double> ratingBySeason = episodes.stream()
+                .filter(e -> e.getEvaluation() > 0.0)
+                .collect(
+                        Collectors.groupingBy(
+                                Episode::getSeason,
+                                Collectors.averagingDouble(Episode::getEvaluation)
+                        )
+                );
+        System.out.println("\nRating by Season: " + ratingBySeason);
+    }
+
+
+    private void searchEpisodeByTitle(List<Episode> episodes) {
+        String title = entry("Enter the episode title");
+
+        while (title.isBlank()) {
+            System.out.println("Invalid entry, try again!");
+            title = entry("Enter the episode title");
+        }
+        title = title.trim();
+
+        String finalTitle = title;
+        Optional<Episode> optionalEpisode = episodes.parallelStream() //stream()
+                .filter(e -> e.getTitle().toUpperCase().contains(finalTitle.toUpperCase()))
+                .findFirst();
+
+        if (optionalEpisode.isPresent()) {
+            System.out.println("\nEpisode found: " + optionalEpisode.get());
+        } else {
+            System.out.println("\nEpisode " + title + ", not found");
         }
     }
 
@@ -131,9 +190,8 @@ public class FirstMenu {
         }
     }
 
-
-    private String getEntrySeriesName() {
-        System.out.println("\nWrite series name to search or N to exit");
+    private String entry(String message) {
+        System.out.println("\n" + message);
         return scanner.nextLine();
     }
 
