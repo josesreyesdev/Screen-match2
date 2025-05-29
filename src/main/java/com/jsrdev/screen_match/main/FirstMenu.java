@@ -107,12 +107,26 @@ public class FirstMenu {
             // Search episodes by title
             //searchEpisodeByTitle(episodes);
 
+            // Rating by season
+            //ratingBySeason(episodes);
+
             // Statistics
             statistics(episodes);
         }
     }
 
     private void statistics(List<Episode> episodes) {
+        DoubleSummaryStatistics statistics = episodes.stream()
+                .filter(e -> e.getEvaluation() > 0.0)
+                .collect(Collectors.summarizingDouble(Episode::getEvaluation));
+
+        System.out.println("\nStatistics: " + statistics);
+        System.out.println("Average rating: " + statistics.getAverage());
+        System.out.println("Best rated episode: " + statistics.getMax());
+        System.out.println("Worst rated episode: " + statistics.getMin());
+    }
+
+    private void ratingBySeason(List<Episode> episodes) {
         Map<Integer, Double> ratingBySeason = episodes.stream()
                 .filter(e -> e.getEvaluation() > 0.0)
                 .collect(
