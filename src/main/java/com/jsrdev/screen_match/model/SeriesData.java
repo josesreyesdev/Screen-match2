@@ -27,6 +27,6 @@ public record SeriesData(
         @JsonAlias("imdbVotes") String imdbVotes,
         @JsonAlias("imdbID") String imdbID,
         @JsonAlias("Type") String type,
-        @JsonAlias("totalSeasons") Integer totalSeasons,
+        @JsonAlias("totalSeasons") String totalSeasons,
         @JsonAlias("Response") boolean response
 ) {}
