@@ -1,6 +1,6 @@
 package com.jsrdev.screen_match;
 
-import com.jsrdev.screen_match.main.FirstMenu;
+import com.jsrdev.screen_match.main.SeriesMenu;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -14,8 +14,7 @@ public class ScreenMatchApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        FirstMenu menu = new FirstMenu();
+        SeriesMenu menu = new SeriesMenu();
         menu.showMenu();
-
     }
 }

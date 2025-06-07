@@ -49,7 +49,7 @@ public class FirstMenu {
 
             // Seasons
             List<SeasonData> seasons = new ArrayList<>();
-            for (int i = 1; i <= seriesData.totalSeasons(); i++) {
+            for (int i = 1; i <= Integer.parseInt(seriesData.totalSeasons()); i++) {
                 url = buildURL(encodeAndFormatSeriesName, String.valueOf(i), null);
                 json = apiService.fetchData(url);
                 SeasonData seasonData = convertData.getData(json, SeasonData.class);
@@ -59,7 +59,7 @@ public class FirstMenu {
             seasons.forEach(System.out::println);
 
             // Show episodes title by seasons
-            for (int i = 0; i < seriesData.totalSeasons(); i++) {
+            for (int i = 0; i < Integer.parseInt(seriesData.totalSeasons()); i++) {
                 List<EpisodeData> episodesBySeason = seasons.get(i).episodeData();
                 System.out.println("\nSeason " + i);
                 for (EpisodeData episodeData : episodesBySeason) {
