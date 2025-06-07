@@ -50,10 +50,10 @@ public class Series {
     @Override
     public String toString() {
         return "title='" + title + '\'' +
+                ", genre=" + genre +
                 ", totalSeasons=" + totalSeasons +
                 ", evaluation=" + evaluation +
                 ", poster='" + poster + '\'' +
-                ", genre=" + genre +
                 ", actors='" + actors + '\'' +
                 ", synopsis='" + synopsis ;
     }

@@ -1,8 +1,10 @@
 package com.jsrdev.screen_match.mappers;
 
+import com.google.genai.errors.GenAiIOException;
 import com.jsrdev.screen_match.model.Genre;
 import com.jsrdev.screen_match.model.Series;
 import com.jsrdev.screen_match.model.SeriesData;
+import com.jsrdev.screen_match.service.GeminiAIService;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -15,7 +17,7 @@ public class SeriesMapper {
         int year = extractStartYear(seriesData.year());
         LocalDate released = parseToDate(seriesData.released());
         Genre genre = parseGenres(seriesData.genre());
-        String synopsis = seriesData.plot(); //translateSynopsis(seriesData.plot());
+        String synopsis = translateSynopsis(seriesData.plot());
         double evaluation = parseDoubleOrDefault(seriesData.imdbRating(), 0.0);
         int totalSeasons = parseIntOrDefault(seriesData.totalSeasons(), 0);
 
@@ -62,13 +64,13 @@ public class SeriesMapper {
         throw new IllegalArgumentException("No valid genre found: " + genreStr);
     }
 
-    /*private String translateSynopsis(String plot) {
+    private String translateSynopsis(String plot) {
         try {
-            return OpenAIService.getTranslation(plot);
-        } catch (OpenAiHttpException e) {
+            return GeminiAIService.getTranslation(plot);
+        } catch (GenAiIOException e) {
             return plot;
         }
-    }*/
+    }
 
     private double parseDoubleOrDefault(String value, double defaultVal) {
         try {
