@@ -25,6 +25,9 @@ public class Series {
     @Transient
     private List<Episode> episodes;
 
+    public Series() {
+    }
+
     public Series(String title, Integer totalSeasons, Double evaluation, String poster, Genre genre, String actors, String synopsis) {
         this.title = title;
         this.totalSeasons = totalSeasons;

@@ -152,15 +152,12 @@ public class SeriesMenu {
     private void showSearchedSeries() {
         System.out.println("\n📺 Showing Searched Series...");
 
-        if (seriesDataList.isEmpty()) {
-            System.out.println("\nI did not find any series available");
+        List<Series> series = seriesRepository.findAll();
+
+        if (series.isEmpty()) {
+            System.out.println("\nI did not find any series available in DB");
             return;
         }
-
-        List<Series> series;
-        series = seriesDataList.stream()
-                .map(s -> new SeriesMapper().mapToSeries(s))
-                .collect(Collectors.toList());
 
         series.stream()
                 .sorted(Comparator.comparing(Series::getGenre))
