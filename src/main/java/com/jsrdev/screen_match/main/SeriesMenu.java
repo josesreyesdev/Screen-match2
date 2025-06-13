@@ -4,6 +4,7 @@ import com.jsrdev.screen_match.mappers.SeriesMapper;
 import com.jsrdev.screen_match.model.SeasonData;
 import com.jsrdev.screen_match.model.Series;
 import com.jsrdev.screen_match.model.SeriesData;
+import com.jsrdev.screen_match.repository.SeriesRepository;
 import com.jsrdev.screen_match.service.ApiService;
 import com.jsrdev.screen_match.service.ConvertData;
 import com.jsrdev.screen_match.utils.Configuration;
@@ -24,6 +25,12 @@ public class SeriesMenu {
     private final Scanner scanner = new Scanner(System.in);
 
     private final List<SeriesData> seriesDataList = new ArrayList<>();
+
+    private final SeriesRepository seriesRepository;
+
+    public SeriesMenu(SeriesRepository seriesRepository) {
+        this.seriesRepository = seriesRepository;
+    }
 
     public void showMenu() {
         while (true) {
@@ -91,7 +98,9 @@ public class SeriesMenu {
 
     private void searchWebSeries() {
         SeriesData seriesData = getSeriesData();
-        seriesDataList.add(seriesData);
+        Series series = new SeriesMapper().mapToSeries(seriesData);
+        seriesRepository.save(series);
+        //seriesDataList.add(seriesData);
 
         System.out.println("\n\uD83D\uDCFA Searching Series...");
         System.out.println(seriesData);
@@ -123,6 +132,11 @@ public class SeriesMenu {
     private void searchEpisodes() {
         System.out.println("\n🎬 Searching Episodes...");
 
+        if (seriesDataList.isEmpty()) {
+            System.out.println("\nI did not find any series available to show their episodes");
+            return;
+        }
+
         // Seasons
         List<SeasonData> seasons = new ArrayList<>();
         int totalSeason = Integer.parseInt(seriesDataList.getLast().totalSeasons());
@@ -137,10 +151,13 @@ public class SeriesMenu {
 
     private void showSearchedSeries() {
         System.out.println("\n📺 Showing Searched Series...");
-        List<Series> series;
-        series = seriesDataList.stream()
-                .map(s -> new SeriesMapper().mapToSeries(s))
-                .collect(Collectors.toList());
+
+        List<Series> series = seriesRepository.findAll();
+
+        if (series.isEmpty()) {
+            System.out.println("\nI did not find any series available in DB");
+            return;
+        }
 
         series.stream()
                 .sorted(Comparator.comparing(Series::getGenre))
@@ -148,27 +165,27 @@ public class SeriesMenu {
     }
 
     private void searchSeriesByTitle() {
-        System.out.println("📝 Searching Series by Title...");
+        System.out.println("\n📝 Searching Series by Title...");
     }
 
     private void searchTop5Series() {
-        System.out.println("🏆 Showing Top 5 Series...");
+        System.out.println("\n🏆 Showing Top 5 Series...");
     }
 
     private void searchByGenreSeries() {
-        System.out.println("🎭 Searching Series by Genre...");
+        System.out.println("\n🎭 Searching Series by Genre...");
     }
 
     private void filterSeriesBySeasonAndEvaluation() {
-        System.out.println("📊 Filtering Series by Season and Evaluation...");
+        System.out.println("\n📊 Filtering Series by Season and Evaluation...");
     }
 
     private void searchEpisodeByTitle() {
-        System.out.println("🔎 Searching Episode by Title...");
+        System.out.println("\n🔎 Searching Episode by Title...");
     }
 
     private void searchTop5EpisodesBySeries() {
-        System.out.println("🏅 Showing Top 5 Episodes by Series...");
+        System.out.println("\n🏅 Showing Top 5 Episodes by Series...");
     }
 
     private String buildURL(String seriesName, String seasonNumber, String episodeNumber) {
