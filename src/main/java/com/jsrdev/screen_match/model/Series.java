@@ -3,6 +3,8 @@ package com.jsrdev.screen_match.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 
+import java.util.List;
+
 @Entity
 @Table(name = "series")
 @Getter
@@ -19,6 +21,9 @@ public class Series {
     private Genre genre;
     private String actors;
     private String synopsis;
+
+    @Transient
+    private List<Episode> episodes;
 
     public Series(String title, Integer totalSeasons, Double evaluation, String poster, Genre genre, String actors, String synopsis) {
         this.title = title;

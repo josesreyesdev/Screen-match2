@@ -4,6 +4,7 @@ import com.jsrdev.screen_match.mappers.SeriesMapper;
 import com.jsrdev.screen_match.model.SeasonData;
 import com.jsrdev.screen_match.model.Series;
 import com.jsrdev.screen_match.model.SeriesData;
+import com.jsrdev.screen_match.repository.SeriesRepository;
 import com.jsrdev.screen_match.service.ApiService;
 import com.jsrdev.screen_match.service.ConvertData;
 import com.jsrdev.screen_match.utils.Configuration;
@@ -24,6 +25,12 @@ public class SeriesMenu {
     private final Scanner scanner = new Scanner(System.in);
 
     private final List<SeriesData> seriesDataList = new ArrayList<>();
+
+    private final SeriesRepository seriesRepository;
+
+    public SeriesMenu(SeriesRepository seriesRepository) {
+        this.seriesRepository = seriesRepository;
+    }
 
     public void showMenu() {
         while (true) {
@@ -91,7 +98,9 @@ public class SeriesMenu {
 
     private void searchWebSeries() {
         SeriesData seriesData = getSeriesData();
-        seriesDataList.add(seriesData);
+        Series series = new SeriesMapper().mapToSeries(seriesData);
+        seriesRepository.save(series);
+        //seriesDataList.add(seriesData);
 
         System.out.println("\n\uD83D\uDCFA Searching Series...");
         System.out.println(seriesData);
