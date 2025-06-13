@@ -123,6 +123,11 @@ public class SeriesMenu {
     private void searchEpisodes() {
         System.out.println("\n🎬 Searching Episodes...");
 
+        if (seriesDataList.isEmpty()) {
+            System.out.println("\nI did not find any series available to show their episodes");
+            return;
+        }
+
         // Seasons
         List<SeasonData> seasons = new ArrayList<>();
         int totalSeason = Integer.parseInt(seriesDataList.getLast().totalSeasons());
@@ -137,6 +142,12 @@ public class SeriesMenu {
 
     private void showSearchedSeries() {
         System.out.println("\n📺 Showing Searched Series...");
+
+        if (seriesDataList.isEmpty()) {
+            System.out.println("\nI did not find any series available");
+            return;
+        }
+
         List<Series> series;
         series = seriesDataList.stream()
                 .map(s -> new SeriesMapper().mapToSeries(s))
@@ -148,27 +159,27 @@ public class SeriesMenu {
     }
 
     private void searchSeriesByTitle() {
-        System.out.println("📝 Searching Series by Title...");
+        System.out.println("\n📝 Searching Series by Title...");
     }
 
     private void searchTop5Series() {
-        System.out.println("🏆 Showing Top 5 Series...");
+        System.out.println("\n🏆 Showing Top 5 Series...");
     }
 
     private void searchByGenreSeries() {
-        System.out.println("🎭 Searching Series by Genre...");
+        System.out.println("\n🎭 Searching Series by Genre...");
     }
 
     private void filterSeriesBySeasonAndEvaluation() {
-        System.out.println("📊 Filtering Series by Season and Evaluation...");
+        System.out.println("\n📊 Filtering Series by Season and Evaluation...");
     }
 
     private void searchEpisodeByTitle() {
-        System.out.println("🔎 Searching Episode by Title...");
+        System.out.println("\n🔎 Searching Episode by Title...");
     }
 
     private void searchTop5EpisodesBySeries() {
-        System.out.println("🏅 Showing Top 5 Episodes by Series...");
+        System.out.println("\n🏅 Showing Top 5 Episodes by Series...");
     }
 
     private String buildURL(String seriesName, String seasonNumber, String episodeNumber) {

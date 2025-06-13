@@ -1,10 +1,21 @@
 package com.jsrdev.screen_match.model;
 
+import jakarta.persistence.*;
+import lombok.Getter;
+
+@Entity
+@Table(name = "series")
+@Getter
 public class Series {
+
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(unique = true)
     private String title;
     private Integer totalSeasons;
     private Double evaluation;
     private String poster;
+    @Enumerated(EnumType.STRING)
     private Genre genre;
     private String actors;
     private String synopsis;
@@ -17,34 +28,6 @@ public class Series {
         this.genre = genre;
         this.actors = actors;
         this.synopsis = synopsis;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public Integer getTotalSeasons() {
-        return totalSeasons;
-    }
-
-    public Double getEvaluation() {
-        return evaluation;
-    }
-
-    public String getPoster() {
-        return poster;
-    }
-
-    public Genre getGenre() {
-        return genre;
-    }
-
-    public String getActors() {
-        return actors;
-    }
-
-    public String getSynopsis() {
-        return synopsis;
     }
 
     @Override
