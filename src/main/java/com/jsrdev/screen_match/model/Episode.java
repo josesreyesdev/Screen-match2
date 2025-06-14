@@ -1,15 +1,30 @@
 package com.jsrdev.screen_match.model;
 
+import jakarta.persistence.*;
+import lombok.Getter;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.Optional;
 
+@Getter
+@Entity
+@Table(name = "episodes")
 public class Episode {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private Integer season;
     private String title;
     private Integer episodeNumber;
     private Double evaluation;
     private LocalDate releaseDate;
+    @ManyToOne
+    private Series series;
+
+    public Episode() {
+    }
 
     public Episode(String season, EpisodeData e) {
         this.season = Optional.ofNullable(season)
@@ -28,26 +43,6 @@ public class Episode {
         } catch (DateTimeParseException exception) {
             this.releaseDate = null;
         }
-    }
-
-    public Integer getSeason() {
-        return season;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public Integer getEpisodeNumber() {
-        return episodeNumber;
-    }
-
-    public Double getEvaluation() {
-        return evaluation;
-    }
-
-    public LocalDate getReleaseDate() {
-        return releaseDate;
     }
 
     @Override
