@@ -2,12 +2,12 @@ package com.jsrdev.screen_match.model;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
-import java.util.Optional;
 
 @Getter
+@NoArgsConstructor
 @Entity
 @Table(name = "episodes")
 public class Episode {
@@ -23,26 +23,13 @@ public class Episode {
     @ManyToOne
     private Series series;
 
-    public Episode() {
-    }
 
-    public Episode(String season, EpisodeData e) {
-        this.season = Optional.ofNullable(season)
-                .map(Integer::valueOf)
-                .orElse(-1);
-        this.title = e.title();
-        this.episodeNumber = e.episode();
-        try {
-            this.evaluation = Double.valueOf(e.evaluation());
-        } catch (NumberFormatException exception) {
-            this.evaluation = 0.0;
-        }
-
-        try {
-            this.releaseDate = LocalDate.parse(e.released());
-        } catch (DateTimeParseException exception) {
-            this.releaseDate = null;
-        }
+    public Episode(Integer season, String title, Integer episodeNumber, Double evaluation, LocalDate releaseDate) {
+        this.season = season;
+        this.title = title;
+        this.episodeNumber = episodeNumber;
+        this.evaluation = evaluation;
+        this.releaseDate = releaseDate;
     }
 
     @Override

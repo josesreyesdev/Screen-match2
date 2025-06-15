@@ -2,12 +2,15 @@ package com.jsrdev.screen_match.model;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
 
 @Entity
 @Table(name = "series")
 @Getter
+@NoArgsConstructor
 public class Series {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,11 +25,9 @@ public class Series {
     private String actors;
     private String synopsis;
 
-    @OneToMany(mappedBy = "series")
+    @Setter
+    @OneToMany(mappedBy = "series", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Episode> episodes;
-
-    public Series() {
-    }
 
     public Series(String title, Integer totalSeasons, Double evaluation, String poster, Genre genre, String actors, String synopsis) {
         this.title = title;

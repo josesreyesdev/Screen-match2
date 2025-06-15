@@ -1,6 +1,8 @@
 package com.jsrdev.screen_match.main;
 
+import com.jsrdev.screen_match.mappers.EpisodeMapper;
 import com.jsrdev.screen_match.mappers.SeriesMapper;
+import com.jsrdev.screen_match.model.Episode;
 import com.jsrdev.screen_match.model.SeasonData;
 import com.jsrdev.screen_match.model.Series;
 import com.jsrdev.screen_match.model.SeriesData;
@@ -11,10 +13,7 @@ import com.jsrdev.screen_match.utils.Configuration;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class SeriesMenu {
@@ -24,7 +23,7 @@ public class SeriesMenu {
 
     private final Scanner scanner = new Scanner(System.in);
 
-    private final List<SeriesData> seriesDataList = new ArrayList<>();
+    private List<Series> series;
 
     private final SeriesRepository seriesRepository;
 
@@ -47,7 +46,7 @@ public class SeriesMenu {
                 case 8 -> searchEpisodeByTitle();
                 case 9 -> searchTop5EpisodesBySeries();
                 case 0 -> {
-                    System.out.println("\n****** Execution Completed ******");
+                    System.out.println("\n****** Execution Completed ******\n");
                     return;
                 }
                 default -> System.out.println("Option is not valid");
@@ -130,29 +129,46 @@ public class SeriesMenu {
     }
 
     private void searchEpisodes() {
+        showSearchedSeries();
+        String seriesName = input("Enter the series name to show its episodes: ");
         System.out.println("\n🎬 Searching Episodes...");
 
-        if (seriesDataList.isEmpty()) {
-            System.out.println("\nI did not find any series available to show their episodes");
+        Optional<Series> searchSeries = series.stream()
+                .filter(s -> s.getTitle().toLowerCase().contains(seriesName.toLowerCase()))
+                .findFirst();
+
+        if (searchSeries.isEmpty()) {
+            System.out.println("\nI did not find " + seriesName + " series available to show their episodes");
             return;
         }
 
         // Seasons
         List<SeasonData> seasons = new ArrayList<>();
-        int totalSeason = Integer.parseInt(seriesDataList.getLast().totalSeasons());
-        for (int i = 1; i <= totalSeason; i++) {
-            String url = buildURL(encodedAndFormatSeriesName(seriesDataList.getLast().title()), String.valueOf(i), null);
+        Series seriesFound = searchSeries.get();
+        for (int i = 1; i <= seriesFound.getTotalSeasons(); i++) {
+            String url = buildURL(encodedAndFormatSeriesName(seriesFound.getTitle()), String.valueOf(i), null);
             String json = apiService.fetchData(url);
             SeasonData seasonData = deserializeData.getData(json, SeasonData.class);
             seasons.add(seasonData);
         }
-        seasons.forEach(System.out::println);
+        //seasons.forEach(System.out::println);
+
+        List<Episode> episodes = seasons.stream()
+                .flatMap(s -> s.episodeData().stream()
+                        .map(e -> new EpisodeMapper().mapToEpisode(s.season(), e))
+                )
+                .collect(Collectors.toList());
+
+        seriesFound.setEpisodes(episodes);
+        seriesRepository.save(seriesFound);
+
+        episodes.forEach(System.out::println);
     }
 
     private void showSearchedSeries() {
         System.out.println("\n📺 Showing Searched Series...");
 
-        List<Series> series = seriesRepository.findAll();
+        series = seriesRepository.findAll();
 
         if (series.isEmpty()) {
             System.out.println("\nI did not find any series available in DB");
