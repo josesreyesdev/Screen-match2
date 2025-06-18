@@ -3,6 +3,7 @@ package com.jsrdev.screen_match.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDate;
 
@@ -20,7 +21,7 @@ public class Episode {
     private Integer episodeNumber;
     private Double evaluation;
     private LocalDate releaseDate;
-    @ManyToOne
+    @ManyToOne @Setter
     private Series series;
 
 

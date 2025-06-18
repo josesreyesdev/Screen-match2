@@ -3,7 +3,6 @@ package com.jsrdev.screen_match.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.util.List;
 
@@ -13,7 +12,8 @@ import java.util.List;
 @NoArgsConstructor
 public class Series {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(unique = true)
     private String title;
@@ -25,7 +25,6 @@ public class Series {
     private String actors;
     private String synopsis;
 
-    @Setter
     @OneToMany(mappedBy = "series", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Episode> episodes;
 
@@ -39,14 +38,20 @@ public class Series {
         this.synopsis = synopsis;
     }
 
+    public void setEpisodes(List<Episode> episodes) {
+        episodes.forEach(e -> e.setSeries(this));
+        this.episodes = episodes;
+    }
+
     @Override
     public String toString() {
         return "title='" + title + '\'' +
                 ", genre=" + genre +
                 ", totalSeasons=" + totalSeasons +
-                ", evaluation=" + evaluation +
+                ", evaluation=" + evaluation + '\'' +
                 ", poster='" + poster + '\'' +
                 ", actors='" + actors + '\'' +
-                ", synopsis='" + synopsis ;
+                ", synopsis='" + synopsis + '\'' +
+                ", episodes=" + episodes;
     }
 }
