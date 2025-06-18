@@ -1,53 +1,36 @@
 package com.jsrdev.screen_match.model;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
-import java.util.Optional;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+import java.time.LocalDate;
+
+@Getter
+@NoArgsConstructor
+@Entity
+@Table(name = "episodes")
 public class Episode {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private Integer season;
     private String title;
     private Integer episodeNumber;
     private Double evaluation;
     private LocalDate releaseDate;
+    @ManyToOne @Setter
+    private Series series;
 
-    public Episode(String season, EpisodeData e) {
-        this.season = Optional.ofNullable(season)
-                .map(Integer::valueOf)
-                .orElse(-1);
-        this.title = e.title();
-        this.episodeNumber = e.episode();
-        try {
-            this.evaluation = Double.valueOf(e.evaluation());
-        } catch (NumberFormatException exception) {
-            this.evaluation = 0.0;
-        }
 
-        try {
-            this.releaseDate = LocalDate.parse(e.released());
-        } catch (DateTimeParseException exception) {
-            this.releaseDate = null;
-        }
-    }
-
-    public Integer getSeason() {
-        return season;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public Integer getEpisodeNumber() {
-        return episodeNumber;
-    }
-
-    public Double getEvaluation() {
-        return evaluation;
-    }
-
-    public LocalDate getReleaseDate() {
-        return releaseDate;
+    public Episode(Integer season, String title, Integer episodeNumber, Double evaluation, LocalDate releaseDate) {
+        this.season = season;
+        this.title = title;
+        this.episodeNumber = episodeNumber;
+        this.evaluation = evaluation;
+        this.releaseDate = releaseDate;
     }
 
     @Override

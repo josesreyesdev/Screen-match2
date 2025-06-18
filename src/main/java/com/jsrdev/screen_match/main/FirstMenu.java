@@ -1,5 +1,6 @@
 package com.jsrdev.screen_match.main;
 
+import com.jsrdev.screen_match.mappers.EpisodeMapper;
 import com.jsrdev.screen_match.model.Episode;
 import com.jsrdev.screen_match.model.EpisodeData;
 import com.jsrdev.screen_match.model.SeasonData;
@@ -95,7 +96,7 @@ public class FirstMenu {
             // Convert to an episode type
             List<Episode> episodes = seasons.stream()
                     .flatMap(s -> s.episodeData().stream()
-                            .map(e -> new Episode(s.season(), e)))
+                            .map(e -> new EpisodeMapper().mapToEpisode(s.season(), e)))
                     .collect(Collectors.toList());
 
             System.out.println();
