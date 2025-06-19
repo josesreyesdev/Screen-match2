@@ -182,6 +182,7 @@ public class SeriesMenu {
 
     private void searchSeriesByTitle() {
         String seriesName = input("Enter the name of the series to search: ");
+
         System.out.println("\n📝 Searching Series by Title...");
 
         Optional<Series> optionalSeries = seriesRepository.findByTitleContainsIgnoreCase(seriesName);
@@ -195,7 +196,12 @@ public class SeriesMenu {
     }
 
     private void searchTop5Series() {
-        System.out.println("\n🏆 Showing Top 5 Series...");
+        System.out.println("\n🏆 Showing Top 5 Series...\n");
+        List<Series> topSeries = seriesRepository.findTop5ByOrderByEvaluationDesc();
+        for (int i = 0; i < topSeries.size(); i++) {
+            Series s = topSeries.get(i);
+            System.out.printf("%d.- %s (⭐ %.1f)\n", i + 1, s.getTitle(), s.getEvaluation());
+        }
     }
 
     private void searchByGenreSeries() {
