@@ -2,10 +2,7 @@ package com.jsrdev.screen_match.main;
 
 import com.jsrdev.screen_match.mappers.EpisodeMapper;
 import com.jsrdev.screen_match.mappers.SeriesMapper;
-import com.jsrdev.screen_match.model.Episode;
-import com.jsrdev.screen_match.model.SeasonData;
-import com.jsrdev.screen_match.model.Series;
-import com.jsrdev.screen_match.model.SeriesData;
+import com.jsrdev.screen_match.model.*;
 import com.jsrdev.screen_match.repository.SeriesRepository;
 import com.jsrdev.screen_match.service.ApiService;
 import com.jsrdev.screen_match.service.ConvertData;
@@ -181,19 +178,92 @@ public class SeriesMenu {
     }
 
     private void searchSeriesByTitle() {
+        String seriesName = input("Enter the name of the series to search: ");
+
         System.out.println("\n📝 Searching Series by Title...");
+
+        Optional<Series> optionalSeries = seriesRepository.findByTitleContainsIgnoreCase(seriesName);
+
+        if (optionalSeries.isEmpty()) {
+            System.out.println("\nSeries " + seriesName + " not found");
+            return;
+        }
+
+        System.out.println("\nSearched Series is: " + optionalSeries.get());
     }
 
     private void searchTop5Series() {
-        System.out.println("\n🏆 Showing Top 5 Series...");
+        System.out.println("\n🏆 Showing Top 5 Series...\n");
+        List<Series> topSeries = seriesRepository.findTop5ByOrderByEvaluationDesc();
+        for (int i = 0; i < topSeries.size(); i++) {
+            Series s = topSeries.get(i);
+            System.out.printf("%d.- %s (⭐ %.1f)\n", i + 1, s.getTitle(), s.getEvaluation());
+        }
     }
 
     private void searchByGenreSeries() {
+        String genderName = input("Enter the genre of the series to search: ");
         System.out.println("\n🎭 Searching Series by Genre...");
+
+        Genre genre = Genre.parseGenres(genderName);
+
+        List<Optional<Series>> opSeriesByGenre = seriesRepository.findByGenre(genre);
+
+        List<Series> seriesByGenre = opSeriesByGenre.stream()
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .toList();
+
+        if (seriesByGenre.isEmpty()) {
+            System.out.println("\nNo series found for genre: " + genre);
+            return;
+        }
+
+        for (int i = 0; i < seriesByGenre.size(); i++) {
+            Series s = seriesByGenre.get(i);
+            System.out.printf(
+                    "%d.- %s | Seasons: %d | Genre: %s | (⭐ %.1f)\n",
+                    i + 1,
+                    s.getTitle(),
+                    s.getTotalSeasons(),
+                    s.getGenre(),
+                    s.getEvaluation()
+            );
+        }
     }
 
     private void filterSeriesBySeasonAndEvaluation() {
+        System.out.print("\nFilter series with how many seasons?");
+        int totalSeason = scanner.nextInt();
+        scanner.nextLine();
+
+        System.out.print("\nFrom which evaluation value?");
+        double evaluation = scanner.nextDouble();
+        scanner.nextLine();
+
         System.out.println("\n📊 Filtering Series by Season and Evaluation...");
+
+        List<Series> filterSeries = seriesRepository
+                . findByTotalSeasonsLessThanEqualAndEvaluationGreaterThanEqual(totalSeason, evaluation);
+
+        if (filterSeries.isEmpty()) {
+            System.out.println("\nNo series found with " + totalSeason + " season(s) and evaluation ≥ " + evaluation);
+            return;
+        }
+
+        for (int i = 0; i < filterSeries.size(); i++) {
+            Series s = filterSeries.get(i);
+            System.out.printf(
+                    "%d.- %s | Seasons: %d | Genre: %s | (⭐ %.1f)\n",
+                    i + 1,
+                    s.getTitle(),
+                    s.getTotalSeasons(),
+                    s.getGenre(),
+                    s.getEvaluation()
+            );
+        }
+
+
     }
 
     private void searchEpisodeByTitle() {

@@ -51,7 +51,7 @@ public enum Genre {
         found = fromString(genre);
         if (found != null) return found;
 
-        throw new IllegalArgumentException("Genre: " + genre + " not found");
+        throw new IllegalArgumentException("Genre: " + genre + " not found in enum class");
     }
 
     private static String normalize(String input) {
