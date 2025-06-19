@@ -233,7 +233,37 @@ public class SeriesMenu {
     }
 
     private void filterSeriesBySeasonAndEvaluation() {
+        System.out.print("\nFilter series with how many seasons?");
+        int totalSeason = scanner.nextInt();
+        scanner.nextLine();
+
+        System.out.print("\nFrom which evaluation value?");
+        double evaluation = scanner.nextDouble();
+        scanner.nextLine();
+
         System.out.println("\n📊 Filtering Series by Season and Evaluation...");
+
+        List<Series> filterSeries = seriesRepository
+                . findByTotalSeasonsLessThanEqualAndEvaluationGreaterThanEqual(totalSeason, evaluation);
+
+        if (filterSeries.isEmpty()) {
+            System.out.println("\nNo series found with " + totalSeason + " season(s) and evaluation ≥ " + evaluation);
+            return;
+        }
+
+        for (int i = 0; i < filterSeries.size(); i++) {
+            Series s = filterSeries.get(i);
+            System.out.printf(
+                    "%d.- %s | Seasons: %d | Genre: %s | (⭐ %.1f)\n",
+                    i + 1,
+                    s.getTitle(),
+                    s.getTotalSeasons(),
+                    s.getGenre(),
+                    s.getEvaluation()
+            );
+        }
+
+
     }
 
     private void searchEpisodeByTitle() {
