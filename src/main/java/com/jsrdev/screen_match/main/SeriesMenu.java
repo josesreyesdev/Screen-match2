@@ -2,10 +2,7 @@ package com.jsrdev.screen_match.main;
 
 import com.jsrdev.screen_match.mappers.EpisodeMapper;
 import com.jsrdev.screen_match.mappers.SeriesMapper;
-import com.jsrdev.screen_match.model.Episode;
-import com.jsrdev.screen_match.model.SeasonData;
-import com.jsrdev.screen_match.model.Series;
-import com.jsrdev.screen_match.model.SeriesData;
+import com.jsrdev.screen_match.model.*;
 import com.jsrdev.screen_match.repository.SeriesRepository;
 import com.jsrdev.screen_match.service.ApiService;
 import com.jsrdev.screen_match.service.ConvertData;
@@ -205,7 +202,34 @@ public class SeriesMenu {
     }
 
     private void searchByGenreSeries() {
+        String genderName = input("Enter the genre of the series to search: ");
         System.out.println("\n🎭 Searching Series by Genre...");
+
+        Genre genre = Genre.parseGenres(genderName);
+
+        List<Optional<Series>> opSeriesByGenre = seriesRepository.findByGenre(genre);
+
+        List<Series> seriesByGenre = opSeriesByGenre.stream()
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .toList();
+
+        if (seriesByGenre.isEmpty()) {
+            System.out.println("\nNo series found for genre: " + genre);
+            return;
+        }
+
+        for (int i = 0; i < seriesByGenre.size(); i++) {
+            Series s = seriesByGenre.get(i);
+            System.out.printf(
+                    "%d.- %s | Seasons: %d | Genre: %s | (⭐ %.1f)\n",
+                    i + 1,
+                    s.getTitle(),
+                    s.getTotalSeasons(),
+                    s.getGenre(),
+                    s.getEvaluation()
+            );
+        }
     }
 
     private void filterSeriesBySeasonAndEvaluation() {
