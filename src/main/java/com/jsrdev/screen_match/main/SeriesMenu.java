@@ -181,7 +181,17 @@ public class SeriesMenu {
     }
 
     private void searchSeriesByTitle() {
+        String seriesName = input("Enter the name of the series to search: ");
         System.out.println("\n📝 Searching Series by Title...");
+
+        Optional<Series> optionalSeries = seriesRepository.findByTitleContainsIgnoreCase(seriesName);
+
+        if (optionalSeries.isEmpty()) {
+            System.out.println("\nSeries " + seriesName + " not found");
+            return;
+        }
+
+        System.out.println("\nSearched Series is: " + optionalSeries.get());
     }
 
     private void searchTop5Series() {
