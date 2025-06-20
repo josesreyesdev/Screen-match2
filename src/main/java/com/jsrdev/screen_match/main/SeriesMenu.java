@@ -244,7 +244,8 @@ public class SeriesMenu {
         System.out.println("\n📊 Filtering Series by Season and Evaluation...");
 
         List<Series> filterSeries = seriesRepository
-                . findByTotalSeasonsLessThanEqualAndEvaluationGreaterThanEqual(totalSeason, evaluation);
+                //. findByTotalSeasonsLessThanEqualAndEvaluationGreaterThanEqual(totalSeason, evaluation);
+                .seriesByTotalSeasonsAndEvaluation(totalSeason, evaluation);
 
         if (filterSeries.isEmpty()) {
             System.out.println("\nNo series found with " + totalSeason + " season(s) and evaluation ≥ " + evaluation);
