@@ -24,6 +24,8 @@ public class SeriesMenu {
 
     private final SeriesRepository seriesRepository;
 
+    private Optional<Series> optionalSeries;
+
     public SeriesMenu(SeriesRepository seriesRepository) {
         this.seriesRepository = seriesRepository;
     }
@@ -41,7 +43,7 @@ public class SeriesMenu {
                 case 6 -> searchByGenreSeries();
                 case 7 -> filterSeriesBySeasonAndEvaluation();
                 case 8 -> searchEpisodeByTitle();
-                case 9 -> searchTop5EpisodesBySeries();
+                case 9 -> searchTopEpisodesBySeries();
                 case 0 -> {
                     System.out.println("\n****** Execution Completed ******\n");
                     return;
@@ -63,7 +65,7 @@ public class SeriesMenu {
 
     private Integer getEntryOption() {
         String menu = """
-                \n-----------------------------
+                \n------------ MENU -------------
                 1.- Search New Web Series
                 2.- Search Episodes
                 3.- Show Searched Series
@@ -75,7 +77,7 @@ public class SeriesMenu {
                 9.- Top 5 Episodes By Series
                 
                 0.- Exit
-                -----------------------------
+                ---------------------------------
                 """;
 
         System.out.println(menu);
@@ -182,7 +184,7 @@ public class SeriesMenu {
 
         System.out.println("\n📝 Searching Series by Title...");
 
-        Optional<Series> optionalSeries = seriesRepository.findByTitleContainsIgnoreCase(seriesName);
+        optionalSeries = seriesRepository.findByTitleContainsIgnoreCase(seriesName);
 
         if (optionalSeries.isEmpty()) {
             System.out.println("\nSeries " + seriesName + " not found");
@@ -263,17 +265,88 @@ public class SeriesMenu {
                     s.getEvaluation()
             );
         }
-
-
     }
 
     private void searchEpisodeByTitle() {
+        String episodeTitle = input("Enter episode title:");
+
         System.out.println("\n🔎 Searching Episode by Title...");
+
+        List<Optional<Episode>> opEpisodes = seriesRepository.findEpisodesTitle(episodeTitle);
+
+        List<Episode> episodes = opEpisodes.stream()
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .toList();
+
+        if (episodes.isEmpty()) {
+            System.out.println("\nEpisode " + episodeTitle + " not found");
+            return;
+        }
+
+        System.out.println("\n+++***** Episodes Founds *****+++");
+        episodes.forEach(e ->
+                System.out.printf("Series: %s | Season: %s | Episode: %s - %s | Evaluation: %s\n",
+                        e.getSeries().getTitle(), e.getSeason(), e.getEpisodeNumber(), e.getTitle(), e.getEvaluation())
+        );
     }
 
-    private void searchTop5EpisodesBySeries() {
-        System.out.println("\n🏅 Showing Top 5 Episodes by Series...");
+    private void searchTopEpisodesBySeries() {
+        searchSeriesByTitle();
+
+        if (optionalSeries.isEmpty()) {
+            return;
+        }
+
+        Series series = optionalSeries.get();
+
+        int topNumber = inputInt("Enter the number of the episode top to be consulted: ");
+
+        System.out.println("\n🏅 Showing Top " + topNumber + " Episodes of " + series.getTitle() +"...");
+        List<Episode> topEpisodes = seriesRepository.findTopEpisodesBySeries(series, topNumber);
+
+        if (topEpisodes.isEmpty()) {
+            System.out.println("\nEpisodes from " + series.getTitle() + " not found");
+            return;
+        }
+
+        for (int i = 0; i < topEpisodes.size(); i++) {
+            Episode e = topEpisodes.get(i);
+            System.out.printf(
+                    "%d.- %s | Episode: %d | Seasons: %d | (⭐ %.1f)\n",
+                    i + 1,
+                    e.getTitle(),
+                    e.getEpisodeNumber(),
+                    e.getSeason(),
+                    e.getEvaluation()
+            );
+        }
     }
+
+    private int inputInt(String message) {
+        int number = 0;
+        boolean valid = false;
+        do {
+            System.out.print("\n" + message);
+            String input = scanner.nextLine().trim();
+            if (!input.isEmpty()) {
+                try {
+                    number = Integer.parseInt(input);
+                    if (number > 0) {
+                        valid = true;
+                    } else {
+                        System.out.println("\nNumber must be greater than 0.");
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("\nEnter a valid integer");
+                }
+            } else {
+                System.out.println("\nThe entrance cannot be empty.");
+            }
+        } while (!valid);
+        return number;
+    }
+
 
     private String buildURL(String seriesName, String seasonNumber, String episodeNumber) {
         String urlBase = Configuration.URL_BASE; // "https://www.omdbapi.com/?t="

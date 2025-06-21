@@ -1,5 +1,6 @@
 package com.jsrdev.screen_match.repository;
 
+import com.jsrdev.screen_match.model.Episode;
 import com.jsrdev.screen_match.model.Genre;
 import com.jsrdev.screen_match.model.Series;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -25,4 +26,10 @@ public interface SeriesRepository extends JpaRepository<Series, Long> {
     // JPQL => The Java Persistence Query Language
     @Query("SELECT s FROM Series s WHERE s.totalSeasons <= :totalSeasons AND s.evaluation >= :evaluation")
     List<Series> seriesByTotalSeasonsAndEvaluation(int totalSeasons, double evaluation);
+
+    @Query("SELECT e FROM Series s JOIN s.episodes e WHERE e.title ILIKE %:episodeTitle%")
+    List<Optional<Episode>> findEpisodesTitle(String episodeTitle);
+
+    @Query("SELECT e FROM Series s JOIN s.episodes e WHERE s = :series ORDER BY e.evaluation DESC LIMIT :limit")
+    List<Episode> findTopEpisodesBySeries(Series series, int limit);
 }
