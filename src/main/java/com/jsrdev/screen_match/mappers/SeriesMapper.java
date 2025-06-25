@@ -26,7 +26,7 @@ public class SeriesMapper {
                 seriesData.title(),
                 totalSeasons,
                 evaluation,
-                synopsis,
+                seriesData.poster(),
                 genre,
                 seriesData.actors(),
                 synopsis
