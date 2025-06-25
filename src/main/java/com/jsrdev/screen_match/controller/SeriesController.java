@@ -27,4 +27,9 @@ public class SeriesController {
     public List<SeriesResponse> getTopSeries() {
         return seriesService.getTopSeries();
     }
+
+    @GetMapping("/releases")
+    public List<SeriesResponse> getLatestReleasesSeries() {
+        return seriesService.getLatestReleasesSeries();
+    }
 }

@@ -26,6 +26,10 @@ public class SeriesService {
         return seriesResponses(seriesRepository.findTop5ByOrderByEvaluationDesc());
     }
 
+    public List<SeriesResponse> getLatestReleasesSeries() {
+        return seriesResponses(seriesRepository.latestReleasesSeries());
+    }
+
     private List<SeriesResponse> seriesResponses(List<Series> series) {
         return series.stream()
                 .map(s -> new SeriesMapper().mapToSeriesResponse(s))
