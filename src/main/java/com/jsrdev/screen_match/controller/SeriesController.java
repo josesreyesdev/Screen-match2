@@ -22,4 +22,9 @@ public class SeriesController {
     public List<SeriesResponse> getSeries() {
         return seriesService.getSeries();
     }
+
+    @GetMapping("/top5")
+    public List<SeriesResponse> getTopSeries() {
+        return seriesService.getTopSeries();
+    }
 }
