@@ -1,6 +1,7 @@
 package com.jsrdev.screen_match.mappers;
 
 import com.google.genai.errors.GenAiIOException;
+import com.jsrdev.screen_match.dto.SeriesResponse;
 import com.jsrdev.screen_match.model.Genre;
 import com.jsrdev.screen_match.model.Series;
 import com.jsrdev.screen_match.model.SeriesData;
@@ -25,7 +26,7 @@ public class SeriesMapper {
                 seriesData.title(),
                 totalSeasons,
                 evaluation,
-                synopsis,
+                seriesData.poster(),
                 genre,
                 seriesData.actors(),
                 synopsis
@@ -86,5 +87,18 @@ public class SeriesMapper {
         } catch (NumberFormatException e) {
             return defaultVal;
         }
+    }
+
+    public SeriesResponse mapToSeriesResponse(Series s) {
+        return new SeriesResponse(
+                s.getId(),
+                s.getTitle(),
+                s.getTotalSeasons(),
+                s.getEvaluation(),
+                s.getPoster(),
+                s.getGenre(),
+                s.getActors(),
+                s.getSynopsis()
+        );
     }
 }
