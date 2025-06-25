@@ -7,6 +7,7 @@ import com.jsrdev.screen_match.repository.SeriesRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,5 +35,12 @@ public class SeriesService {
         return series.stream()
                 .map(s -> new SeriesMapper().mapToSeriesResponse(s))
                 .collect(Collectors.toList());
+    }
+
+    public SeriesResponse getSeriesById(Long id) {
+        Optional<Series> seriesOptional = seriesRepository.findById(id);
+        return seriesOptional
+                .map(series -> new SeriesMapper().mapToSeriesResponse(series))
+                .orElse(null);
     }
 }

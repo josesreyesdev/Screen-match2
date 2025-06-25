@@ -3,6 +3,7 @@ package com.jsrdev.screen_match.controller;
 import com.jsrdev.screen_match.dto.SeriesResponse;
 import com.jsrdev.screen_match.service.SeriesService;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -31,5 +32,10 @@ public class SeriesController {
     @GetMapping("/releases")
     public List<SeriesResponse> getLatestReleasesSeries() {
         return seriesService.getLatestReleasesSeries();
+    }
+
+    @GetMapping("/{id}")
+    public SeriesResponse getSeriesById(@PathVariable Long id) {
+        return seriesService.getSeriesById(id);
     }
 }
