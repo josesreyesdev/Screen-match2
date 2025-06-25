@@ -1,29 +1,25 @@
 package com.jsrdev.screen_match.controller;
 
 import com.jsrdev.screen_match.dto.SeriesResponse;
-import com.jsrdev.screen_match.mappers.SeriesMapper;
-import com.jsrdev.screen_match.repository.SeriesRepository;
+import com.jsrdev.screen_match.service.SeriesService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/series")
 public class SeriesController {
 
-    private final SeriesRepository seriesRepository;
+    private final SeriesService seriesService;
 
-    public SeriesController(SeriesRepository seriesRepository) {
-        this.seriesRepository = seriesRepository;
+    public SeriesController(SeriesService seriesService) {
+        this.seriesService = seriesService;
     }
 
     @GetMapping()
     public List<SeriesResponse> getSeries() {
-        return seriesRepository.findAll().stream()
-                .map(s -> new SeriesMapper().mapToSeriesResponse(s))
-                .collect(Collectors.toList());
+        return seriesService.getSeries();
     }
 }
