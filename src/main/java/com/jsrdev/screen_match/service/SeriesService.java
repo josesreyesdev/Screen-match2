@@ -61,4 +61,8 @@ public class SeriesService {
                 .map(e -> new EpisodeMapper().mapToEpisodeResponse(e))
                 .collect(Collectors.toList());
     }
+
+    public List<EpisodeResponse> getEpisodesBySeasonNumber(Long id, Long seasonNumber) {
+        return episodeResponses(seriesRepository.getEpisodesBySeasonNumber(id, seasonNumber));
+    }
 }
