@@ -21,14 +21,6 @@ public enum Genre {
         this.genreEsp = genreEsp;
     }
 
-    public String getGenreOmdb() {
-        return genreOmdb;
-    }
-
-    public String getGenreEsp() {
-        return genreEsp;
-    }
-
     public static Genre fromString(String text) {
         return Arrays.stream(values())
                 .filter(g -> g.genreOmdb.equalsIgnoreCase(text))

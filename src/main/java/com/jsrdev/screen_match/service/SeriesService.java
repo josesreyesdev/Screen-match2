@@ -5,6 +5,7 @@ import com.jsrdev.screen_match.dto.SeriesResponse;
 import com.jsrdev.screen_match.mappers.EpisodeMapper;
 import com.jsrdev.screen_match.mappers.SeriesMapper;
 import com.jsrdev.screen_match.model.Episode;
+import com.jsrdev.screen_match.model.Genre;
 import com.jsrdev.screen_match.model.Series;
 import com.jsrdev.screen_match.repository.SeriesRepository;
 import org.springframework.stereotype.Service;
@@ -64,5 +65,15 @@ public class SeriesService {
 
     public List<EpisodeResponse> getEpisodesBySeasonNumber(Long id, Long seasonNumber) {
         return episodeResponses(seriesRepository.getEpisodesBySeasonNumber(id, seasonNumber));
+    }
+
+    public List<SeriesResponse> getSeriesByGenre(String genre) {
+        Genre parsedGenre = Genre.parseGenres(genre);
+
+        List<Series> seriesByGenre = seriesRepository.findByGenre(parsedGenre).stream()
+                .flatMap(Optional::stream)
+                .toList();
+
+        return seriesByGenre.isEmpty() ? null : seriesResponses(seriesByGenre);
     }
 }
