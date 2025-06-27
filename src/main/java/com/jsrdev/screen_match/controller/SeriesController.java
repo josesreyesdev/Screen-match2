@@ -54,4 +54,9 @@ public class SeriesController {
     public List<SeriesResponse> getSeriesByGenre(@PathVariable String genre) {
         return seriesService.getSeriesByGenre(genre);
     }
+
+    @GetMapping("/{id}/seasons/top")
+    public List<EpisodeResponse> getTopEpisodes(@PathVariable Long id) {
+        return seriesService.getTopEpisodes(id);
+    }
 }

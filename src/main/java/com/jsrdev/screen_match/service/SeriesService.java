@@ -76,4 +76,10 @@ public class SeriesService {
 
         return seriesByGenre.isEmpty() ? null : seriesResponses(seriesByGenre);
     }
+
+    public List<EpisodeResponse> getTopEpisodes(Long id) {
+        return findSeriesById(id)
+                .map(s -> episodeResponses(seriesRepository.findTopEpisodes(s)))
+                .orElse(null);
+    }
 }
