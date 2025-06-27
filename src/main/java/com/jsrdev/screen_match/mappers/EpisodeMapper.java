@@ -1,5 +1,6 @@
 package com.jsrdev.screen_match.mappers;
 
+import com.jsrdev.screen_match.dto.EpisodeResponse;
 import com.jsrdev.screen_match.model.Episode;
 import com.jsrdev.screen_match.model.EpisodeData;
 
@@ -35,5 +36,16 @@ public class EpisodeMapper {
                 .orElse(null);
 
         return new Episode(season, e.title(), e.episode(), evaluation, releaseDate);
+    }
+
+    public EpisodeResponse mapToEpisodeResponse(Episode e) {
+        return new EpisodeResponse(
+                e.getSeason(),
+                e.getTitle(),
+                e.getEpisodeNumber(),
+                e.getEvaluation(),
+                e.getReleaseDate(),
+                e.getSeries().getId()
+        );
     }
 }

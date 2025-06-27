@@ -1,5 +1,6 @@
 package com.jsrdev.screen_match.controller;
 
+import com.jsrdev.screen_match.dto.EpisodeResponse;
 import com.jsrdev.screen_match.dto.SeriesResponse;
 import com.jsrdev.screen_match.service.SeriesService;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,5 +38,10 @@ public class SeriesController {
     @GetMapping("/{id}")
     public SeriesResponse getSeriesById(@PathVariable Long id) {
         return seriesService.getSeriesById(id);
+    }
+
+    @GetMapping("/{id}/seasons/all")
+    public List<EpisodeResponse> getAllSeasons(@PathVariable Long id) {
+        return seriesService.getAllSeasons(id);
     }
 }
